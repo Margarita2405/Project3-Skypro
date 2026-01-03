@@ -36,7 +36,7 @@ def create_objects_from_json(data: List[Dict[str, Any]]) -> List[Category]:
     return categories
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Формируем путь к файлу
     current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     file_path = os.path.join(current_dir, "data", "products.json")
