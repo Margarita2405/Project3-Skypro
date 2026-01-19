@@ -1,0 +1,179 @@
+from src.product import Product
+from src.category import Category
+
+
+def test_category_init(first_category: Category, second_category: Category) -> None:
+    """Тест, который проверяет корректность инициализации объектов класса Category."""
+    assert first_category.name == "Смартфоны"
+    assert first_category.description == (
+        "Смартфоны, как средство не только коммуникации, но и получения" " дополнительных функций для удобства жизни"
+    )
+    assert len(first_category.products) == 3
+
+    assert second_category.name == "Телевизоры"
+    assert second_category.description == (
+        "Современный телевизор, который позволяет наслаждаться просмотром, станет" " вашим другом и помощником"
+    )
+    assert len(second_category.products) == 1
+
+    # Проверяем подсчет количества категорий
+    assert first_category.category_count == 2
+    assert second_category.category_count == 2
+
+    # Проверяем подсчет количества товаров
+    assert first_category.product_count == 4
+    assert second_category.product_count == 4
+
+
+def test_category_attributes(sample_category: Category) -> None:
+    """Тест наличия всех необходимых атрибутов класса Category."""
+    # Проверяем name
+    try:
+        name = sample_category.name
+        assert name is not None  # Атрибут существует
+    except AttributeError:
+        assert False, "Атрибут 'name' отсутствует"
+
+    # Проверяем description
+    try:
+        description = sample_category.description
+        assert description is not None  # Атрибут существует
+    except AttributeError:
+        assert False, "Атрибут 'description' отсутствует"
+
+    # Проверяем products
+    try:
+        products = sample_category.products
+        assert isinstance(products, list)
+    except AttributeError:
+        assert False, "Атрибут 'products' отсутствует"
+
+
+def test_products_in_category(sample_category: Category) -> None:
+    """Тест, что товары в категории являются объектами класса Product."""
+    for product in sample_category.products:
+        assert isinstance(product, Product)
+
+
+def test_category_counters_after_creating_categories() -> None:
+    """Тест счетчиков после создания нескольких категорий."""
+    # Сбрасываем счетчики для чистоты теста
+    Category.category_count = 0
+    Category.product_count = 0
+
+    # Создаем первую категорию с 2 товарами
+    product1 = Product("Товар 1", "Описание", 100.0, 1)
+    product2 = Product("Товар 2", "Описание", 200.0, 2)
+    category1 = Category("Категория 1", "Описание", [product1, product2])
+
+    # Проверяем счетчики и свойства объекта
+    assert Category.category_count == 1
+    assert Category.product_count == 2
+    assert category1.name == "Категория 1"
+    assert len(category1.products) == 2
+
+    # Создаем вторую категорию с 3 товарами
+    product3 = Product("Товар 3", "Описание", 300.0, 3)
+    product4 = Product("Товар 4", "Описание", 400.0, 4)
+    product5 = Product("Товар 5", "Описание", 500.0, 5)
+    category2 = Category("Категория 2", "Описание", [product3, product4, product5])
+
+    assert Category.category_count == 2
+    assert Category.product_count == 5  # 2 + 3
+    assert category2.name == "Категория 2"
+    assert len(category2.products) == 3
+
+    # Создаем третью категорию без товаров
+    category3 = Category("Категория 3", "Описание", [])
+
+    assert Category.category_count == 3
+    assert Category.product_count == 5  # не изменилось
+    assert category3.name == "Категория 3"
+
+    # Создаем четвертую категорию с None вместо товаров
+    category4 = Category("Категория 4", "Описание", [])
+
+    assert Category.category_count == 4
+    assert Category.product_count == 5  # не изменилось
+    assert category4.name == "Категория 4"
+
+
+def test_category_counters_with_same_product_in_multiple_categories() -> None:
+    """Тест счетчиков, когда один товар в нескольких категориях."""
+    Category.category_count = 0
+    Category.product_count = 0
+
+    product = Product("Товар", "Описание", 100.0, 1)
+
+    # Один и тот же товар в двух категориях
+    category1 = Category("Категория 1", "Описание", [product])
+    assert Category.product_count == 1
+    assert Category.category_count == 1
+    assert product in category1.products
+    assert category1.name == "Категория 1"
+
+    category2 = Category("Категория 2", "Описание", [product])
+    assert Category.product_count == 2  # Счетчик увеличился, хотя объект один
+    assert Category.category_count == 2
+    assert product in category2.products
+    assert category2.name == "Категория 2"
+
+
+def test_category_counters_reset() -> None:
+    """Тест сброса счетчиков."""
+    # Устанавливаем начальные значения
+    Category.category_count = 10
+    Category.product_count = 20
+
+    # Проверяем, что они установились
+    assert Category.category_count == 10
+    assert Category.product_count == 20
+
+    # Создаем новую категорию
+    product = Product("Товар", "Описание", 100.0, 1)
+    category = Category("Категория", "Описание", [product])
+
+    # Проверяем, что счетчики увеличились
+    assert Category.category_count == 11
+    assert Category.product_count == 21
+    assert category.name == "Категория"
+
+
+def test_product_modification_reflected_in_category() -> None:
+    """Тест, что изменение товара отражается в категории."""
+    # Создаем товар
+    product = Product("Исходное имя", "Исходное описание", 100.0, 5)
+
+    # Создаем категорию с этим товаром
+    category = Category("Категория", "Описание", [product])
+
+    # Изменяем товар
+    product.name = "Новое имя"
+    product.price = 200.0
+
+    # Проверяем, что изменения видны в категории
+    assert category.products[0].name == "Новое имя"
+    assert category.products[0].price == 200.0
+
+
+def test_category_and_product_together() -> None:
+    """Комплексный тест взаимодействия категории и товаров."""
+    # Создаем несколько товаров
+    products = []
+    for i in range(3):
+        product = Product(f"Товар {i}", f"Описание {i}", (i + 1) * 100.0, (i + 1) * 2)
+        products.append(product)
+
+    # Создаем категорию
+    category = Category("Тестовая категория", "Тестовое описание", products)
+
+    # Проверяем все атрибуты
+    assert category.name == "Тестовая категория"
+    assert category.description == "Тестовое описание"
+    assert len(category.products) == 3
+
+    # Проверяем товары
+    for i in range(3):
+        assert category.products[i].name == f"Товар {i}"
+        assert category.products[i].price == (i + 1) * 100.0
+        assert category.products[i].quantity == (i + 1) * 2
