@@ -127,11 +127,11 @@ def test_create_objects_from_json_simple() -> None:
                                     "функций для удобства жизни")
 
     # Проверяем товары
-    assert isinstance(category.products, list)
-    assert len(category.products) == 1
+    assert isinstance(category._Category__products, list)
+    assert len(category._Category__products) == 1
 
     # Проверяем товар
-    product = category.products[0]
+    product = category._Category__products[0]
     assert isinstance(product, Product)
     assert product.name == "Samsung Galaxy C23 Ultra"
     assert product.price == 180000.0
@@ -217,7 +217,7 @@ def test_create_objects_from_json_empty_products() -> None:
     assert len(categories) == 1
     category = categories[0]
     assert category.name == "Пустая категория"
-    assert isinstance(category.products, list)
+    assert isinstance(category._Category__products, list)
     assert len(category.products) == 0
 
 
@@ -241,7 +241,7 @@ def test_create_objects_with_none_values() -> None:
     categories = create_objects_from_json(test_data)
     assert len(categories) == 1
     assert categories[0].name is None
-    assert categories[0].products[0].price is None
+    assert categories[0]._Category__products[0].price is None
 
 
 def test_create_objects_empty_category_name() -> None:
@@ -276,7 +276,7 @@ def test_create_objects_large_quantity() -> None:
     ]
 
     categories = create_objects_from_json(test_data)
-    assert categories[0].products[0].quantity == 10_000_000
+    assert categories[0]._Category__products[0].quantity == 10_000_000
 
 
 def test_create_objects_malformed_products() -> None:
@@ -336,7 +336,7 @@ def test_create_objects_preserves_order() -> None:
     assert len(categories) == 2
     assert categories[0].name == "Первая категория"
     assert categories[1].name == "Вторая категория"
-    assert len(categories[0].products) == 2
-    assert categories[0].products[0].name == "Товар 1"
-    assert categories[0].products[1].name == "Товар 2"
-    assert categories[1].products[0].name == "Товар 3"
+    assert len(categories[0]._Category__products) == 2
+    assert categories[0]._Category__products[0].name == "Товар 1"
+    assert categories[0]._Category__products[1].name == "Товар 2"
+    assert categories[1]._Category__products[0].name == "Товар 3"
