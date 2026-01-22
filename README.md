@@ -29,6 +29,17 @@
 - `quantity` (int): Количество товара в наличии.
 
 **Основные методы:**
+1. @classmethod
+   def new_product(cls, product_data: Dict[str, Any], products_list: Optional[List['Product']] = None) -> 'Product':
+        """Класс-метод для создания объекта Product из словаря с параметрами. Проверяет
+        наличие товара с таким же именем в списке products_list."""
+2. @property
+   def price(self) -> float:
+       """Геттер возвращает текущую цену товара."""
+3. @price.setter
+   def price(self, new_price: float) -> None:
+       """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При
+       понижении цены запрашивает потверждение у пользователя."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
@@ -36,6 +47,14 @@ print(product1.name)
 print(product1.description)
 print(product1.price)
 print(product1.quantity)
+
+new_product = Product.new_product(
+        {"name": "Samsung Galaxy S23 Ultra", "description": "256GB, Серый цвет, 200MP камера", "price": 180000.0,
+         "quantity": 5})
+print(new_product.name)
+print(new_product.description)
+print(new_product.price)
+print(new_product.quantity)
 
 ### `class Category`
 Класс для представления категорий продукции.
@@ -50,6 +69,11 @@ print(product1.quantity)
 - `product_count` (int): Количество товаров.
 
 **Основные методы:**
+1. def add_product(self, product: Product) -> None:
+       """Метод для добавления продукта в атрибут products."""
+2. @property
+   def products(self) -> str:
+       """Геттер, который будет выводить список товаров в виде строк."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
@@ -75,6 +99,27 @@ def read_json(file_path: str) -> List[Dict[str, Any]]:
 2. **Создание объектов классов**
 def create_objects_from_json(data: List[Dict[str, Any]]) -> List[Category]:
     """Функция, которая принимает данные в виде списка словарей и создает объекты классов."""
+3. **Добавление товаров**
+def add_product(self, product: Product) -> None:
+    """Метод для добавления товара в атрибут products.""" 
+4. **Вывод списка товаров в виде строк**
+@property
+def products(self) -> str:
+    """Геттер, который будет выводить список товаров в виде строк."""
+5. **Создание объекта Product из словаря с параметрами**
+@classmethod
+def new_product(cls, product_data: Dict[str, Any], products_list: Optional[List['Product']] = None) -> 'Product':
+    """Класс-метод для создания объекта Product из словаря с параметрами. Проверяет наличие
+    товара с таким же именем в списке products_list."""
+6. **Возврат текущей цены товара**
+@property
+def price(self) -> float:
+    """Геттер возвращает текущую цену товара."""
+7. **Установка новой цены товара**
+@price.setter
+def price(self, new_price: float) -> None:
+    """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При
+    понижении цены запрашивает потверждение у пользователя."""
 
 ## Использование функций:
 
@@ -152,6 +197,7 @@ conftest.py.
     ```
     pytest tests/test_product.py
     pytest tests/test_category.py
+    pytest tests/test_utils.py
     
     ```
 3. Ожидаемый результат.
