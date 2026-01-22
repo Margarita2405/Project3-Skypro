@@ -1,3 +1,4 @@
+from typing import List, Dict, Any
 from src.product import Product
 
 
@@ -122,3 +123,88 @@ def test_product_class_repr() -> None:
 
     # Проверяем, что представление содержит имя класса
     assert "Product" in repr(product) or "Product" in str(product)
+
+
+def test_new_product() -> None:
+    """Тестирует создание продукта через класс-метод new_product."""
+    # Создаем продукт из словаря
+    product_data: Dict[str, Any] = {
+        'name': 'Ноутбук',
+        'description': 'Игровой ноутбук',
+        'price': 80000.0,
+        'quantity': 5
+    }
+
+    product = Product.new_product(product_data)
+
+    # Проверяем создание
+    assert product.name == 'Ноутбук'
+    assert product.price == 80000.0
+    assert product.quantity == 5
+
+
+def test_new_product_duplicate() -> None:
+    """Тестирует обработку товаров с одинаковыми именами."""
+    # Создаем существующий товар
+    existing_product = Product('Телефон', 'Старый телефон', 20000.0, 3)
+    products_list: List[Product] = [existing_product]
+
+    # Пытаемся создать товар с таким же именем
+    new_data: Dict[str, Any] = {
+        'name': 'Телефон',  # То же имя!
+        'description': 'Новый телефон',
+        'price': 25000.0,  # Более высокая цена
+        'quantity': 2  # Дополнительное количество
+    }
+
+    result = Product.new_product(new_data, products_list)
+
+    # Проверяем, что вернулся существующий товар
+    assert result is existing_product, "Должен вернуться существующий товар"
+
+    # Проверяем обновления
+    assert result.price == 25000.0, "Должна быть установлена более высокая цена"
+    assert result.quantity == 5, "Количество должно сложиться (3 + 2)"
+    assert result.description == 'Новый телефон', "Описание должно обновиться"
+
+
+def test_price_getter() -> None:
+    """Тестирует получение цены через геттер."""
+    product = Product('Планшет', '10 дюймов', 35000.0, 4)
+
+    # Получаем цену через геттер
+    price = product.price
+
+    assert price == 35000.0
+
+
+def test_price_setter_increase() -> None:
+    """Тестирует установку более высокой цены."""
+    product = Product('Монитор', '24 дюйма', 15000.0, 6)
+
+    # Повышаем цену
+    product.price = 18000.0
+
+    assert product.price == 18000.0
+
+
+def test_price_setter_negative() -> None:
+    """Тестирует попытку установить отрицательную цену."""
+    product = Product('Клавиатура', 'Механическая', 5000.0, 10)
+
+    # Пытаемся установить отрицательную цену
+    product.price = -1000.0
+
+    # Цена должна остаться прежней
+    assert product.price == 5000.0
+
+
+def test_price_setter_zero() -> None:
+    """Тестирует попытку установить нулевую цену."""
+    product = Product('Мышь', 'Беспроводная', 3000.0, 15)
+
+    # Пытаемся установить нулевую цену
+    product.price = 0
+
+    # Цена должна остаться прежней
+    assert product.price == 3000.0
