@@ -1,3 +1,4 @@
+from typing import List
 from src.product import Product
 
 
@@ -6,18 +7,32 @@ class Category:
 
     name: str
     description: str
-    products: list
+    __products: list
+    _Category__products: List[Product]
 
     # Переменные на уровне класса для подсчета количества категорий и товаров
     category_count = 0
     product_count = 0
 
-    def __init__(self, name: str, description: str, products: list):
+    def __init__(self, name: str, description: str, products: List[Product]) -> None:
         self.name = name
         self.description = description
-        self.products = products if products else []
+        self.__products: List[Product] = products if products else []
         Category.category_count += 1
         Category.product_count += len(products) if products else 0
+
+    def add_product(self, product: Product) -> None:
+        """Метод для добавления продукта в атрибут products."""
+        self.__products.append(product)
+        Category.product_count += 1
+
+    @property
+    def products(self) -> str:
+        """Геттер, который будет выводить список товаров в виде строк."""
+        products_str = ""
+        for product in self.__products:
+            products_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+        return products_str
 
 
 if __name__ == "__main__":  # pragma: no cover
