@@ -4,17 +4,27 @@ import json
 from pathlib import Path
 from src.product import Product
 from src.category import Category
+from typing import List
+
+
+class TestProduct:
+    """Тесты для класса Product."""
 
 
 @pytest.fixture
 def sample_product() -> Product:
-    """Фикстура для создания тестового продукта."""
-    return Product(
-        "Samsung Galaxy S23 Ultra",
-        "256GB, Серый цвет, 200MP камера",
-        180000.0,
-        5
-    )
+    """Фикстура, возвращающая экземпляр класса Product для тестов."""
+    return Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+
+
+@pytest.fixture
+def another_product() -> Product:
+    """Фикстура с другим товаром."""
+    return Product("Другой товар", "Другое описание", 2000.0, 3)
+
+
+class TestCategory:
+    """Тесты для класса Category."""
 
 
 @pytest.fixture
@@ -23,9 +33,7 @@ def sample_category() -> Category:
     return Category(
         "Телевизоры",
         "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником",
-        [
-            Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-        ]
+        [Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)],
     )
 
 
@@ -38,8 +46,8 @@ def first_category() -> Category:
         [
             Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5),
             Product("Iphone 15", "512GB, Gray space", 210000.0, 8),
-            Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
-        ]
+            Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14),
+        ],
     )
 
 
@@ -49,55 +57,75 @@ def second_category() -> Category:
     return Category(
         "Телевизоры",
         "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником",
-        [
-            Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-        ]
+        [Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)],
     )
+
+
+@pytest.fixture
+def products_list() -> List[Product]:
+    """Фикстура со списком товаров для категории."""
+    return [
+        Product("Товар 1", "Описание 1", 50.0, 3),
+        Product("Товар 2", "Описание 2", 30.0, 7),
+    ]
+
+
+@pytest.fixture
+def category(products_list: List[Product]) -> Category:
+    """Фикстура, возвращающая экземпляр Category с товарами."""
+    return Category("Тестовая категория", "Описание категории", products_list)
+
+
+class TestProductIterator:
+    """Тесты для класса ProductIterator."""
+
+
+@pytest.fixture
+def products() -> List[Product]:
+    """Фикстура со списком товаров."""
+    return [
+        Product("A", "Описание A", 10.0, 1),
+        Product("B", "Описание B", 20.0, 2),
+        Product("C", "Описание C", 30.0, 3),
+    ]
+
+
+@pytest.fixture
+def category_products(products: List[Product]) -> Category:
+    """Фикстура категории с тремя товарами."""
+    return Category("Тестовая категория", "Описание", products)
 
 
 @pytest.fixture
 def valid_data_content() -> str:
     """Фикстура возвращает строку с валидным JSON и представляет данные для тестирования успешного чтения файла."""
-    return json.dumps([
-        {
-            "name": "Смартфоны",
-            "description": "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций для "
-                           "удобства жизни",
-            "products": [
-                {
-                    "name": "Samsung Galaxy C23 Ultra",
-                    "description": "256GB, Серый цвет, 200MP камера",
-                    "price": 180000.0,
-                    "quantity": 5
-                },
-                {
-                    "name": "Iphone 15",
-                    "description": "512GB, Gray space",
-                    "price": 210000.0,
-                    "quantity": 8
-                },
-                {
-                    "name": "Xiaomi Redmi Note 11",
-                    "description": "1024GB, Синий",
-                    "price": 31000.0,
-                    "quantity": 14
-                }
-            ]
-        },
-        {
-            "name": "Телевизоры",
-            "description": "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и"
-                           "помощником",
-            "products": [
-                {
-                    "name": "55\" QLED 4K",
-                    "description": "Фоновая подсветка",
-                    "price": 123000.0,
-                    "quantity": 7
-                }
-            ]
-        }
-    ])
+    return json.dumps(
+        [
+            {
+                "name": "Смартфоны",
+                "description": "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций"
+                               "для удобства жизни",
+                "products": [
+                    {
+                        "name": "Samsung Galaxy C23 Ultra",
+                        "description": "256GB, Серый цвет, 200MP камера",
+                        "price": 180000.0,
+                        "quantity": 5,
+                    },
+                    {"name": "Iphone 15", "description": "512GB, Gray space", "price": 210000.0, "quantity": 8},
+                    {"name": "Xiaomi Redmi Note 11", "description": "1024GB, Синий", "price": 31000.0, "quantity": 14},
+                ],
+            },
+            {
+                "name": "Телевизоры",
+                "description": "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим"
+                               "другом и помощником",
+                "products": [
+                    {"name": '55" QLED 4K', "description": "Фоновая подсветка", "price": 123000.0, "quantity": 7}
+                ],
+            },
+        ]
+    )
 
 
 @pytest.fixture
@@ -131,14 +159,7 @@ def empty_json_file(tmp_path: Path) -> str:
 @pytest.fixture
 def simple_valid_file(tmp_path: Path) -> str:
     """Фикстура создает простой валидный JSON файл. Используется для базового тестирования."""
-    data = [
-        {
-            "name": "Тестовая категория",
-            "products": [
-                {"name": "Тестовый товар", "price": 100.0, "quantity": 5}
-            ]
-        }
-    ]
+    data = [{"name": "Тестовая категория", "products": [{"name": "Тестовый товар", "price": 100.0, "quantity": 5}]}]
     file_path = tmp_path / "simple_valid.json"
     file_path.write_text(json.dumps(data), encoding="utf-8")
     return str(file_path)
@@ -152,23 +173,16 @@ def nested_json_file(tmp_path: Path) -> str:
         {
             "name": "Категория",
             "description": "Описание",
-            "nested": {
-                "level1": {
-                    "level2": "значение"
-                }
-            },
+            "nested": {"level1": {"level2": "значение"}},
             "products": [
                 {
                     "name": "Товар",
                     "description": "Описание",
                     "price": 100.0,
                     "quantity": 5,
-                    "specs": {
-                        "color": "red",
-                        "size": ["S", "M", "L"]
-                    }
+                    "specs": {"color": "red", "size": ["S", "M", "L"]},
                 }
-            ]
+            ],
         }
     ]
     file_path.write_text(json.dumps(data), encoding="utf-8")
@@ -184,13 +198,8 @@ def large_numbers_file(tmp_path: Path) -> str:
             "name": "Дорогие товары",
             "description": "Товары с высокой ценой",
             "products": [
-                {
-                    "name": "Супер товар",
-                    "description": "Очень дорогой",
-                    "price": 1_000_000_000.0,
-                    "quantity": 1
-                }
-            ]
+                {"name": "Супер товар", "description": "Очень дорогой", "price": 1_000_000_000.0, "quantity": 1}
+            ],
         }
     ]
     file_path.write_text(json.dumps(data), encoding="utf-8")
@@ -206,13 +215,8 @@ def special_chars_file(tmp_path: Path) -> str:
             "name": "Тест",
             "description": "тест & < > \" ' \n \t спецсимволы",
             "products": [
-                {
-                    "name": "Товар & < >",
-                    "description": "Описание с \"кавычками\"",
-                    "price": 100.0,
-                    "quantity": 5
-                }
-            ]
+                {"name": "Товар & < >", "description": 'Описание с "кавычками"', "price": 100.0, "quantity": 5}
+            ],
         }
     ]
     file_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
