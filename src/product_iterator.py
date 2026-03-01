@@ -14,7 +14,7 @@ class ProductIterator:
         self.__products = category_object._Category__products
         self.index = 0
 
-    def __iter__(self) -> "ProductIterator":
+    def __iter__(self) -> 'ProductIterator':
         """Возвращает итератор."""
         self.index = 0
         return self
