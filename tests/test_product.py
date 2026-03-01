@@ -1,3 +1,4 @@
+import pytest
 from typing import List, Dict, Any
 from src.product import Product
 
@@ -129,16 +130,16 @@ def test_new_product() -> None:
     """Тестирует создание продукта через класс-метод new_product."""
     # Создаем продукт из словаря
     product_data: Dict[str, Any] = {
-        'name': 'Ноутбук',
-        'description': 'Игровой ноутбук',
-        'price': 80000.0,
-        'quantity': 5
+        "name": "Ноутбук",
+        "description": "Игровой ноутбук",
+        "price": 80000.0,
+        "quantity": 5,
     }
 
     product = Product.new_product(product_data)
 
     # Проверяем создание
-    assert product.name == 'Ноутбук'
+    assert product.name == "Ноутбук"
     assert product.price == 80000.0
     assert product.quantity == 5
 
@@ -146,15 +147,15 @@ def test_new_product() -> None:
 def test_new_product_duplicate() -> None:
     """Тестирует обработку товаров с одинаковыми именами."""
     # Создаем существующий товар
-    existing_product = Product('Телефон', 'Старый телефон', 20000.0, 3)
+    existing_product = Product("Телефон", "Старый телефон", 20000.0, 3)
     products_list: List[Product] = [existing_product]
 
     # Пытаемся создать товар с таким же именем
     new_data: Dict[str, Any] = {
-        'name': 'Телефон',  # То же имя!
-        'description': 'Новый телефон',
-        'price': 25000.0,  # Более высокая цена
-        'quantity': 2  # Дополнительное количество
+        "name": "Телефон",  # То же имя!
+        "description": "Новый телефон",
+        "price": 25000.0,  # Более высокая цена
+        "quantity": 2,  # Дополнительное количество
     }
 
     result = Product.new_product(new_data, products_list)
@@ -165,12 +166,12 @@ def test_new_product_duplicate() -> None:
     # Проверяем обновления
     assert result.price == 25000.0, "Должна быть установлена более высокая цена"
     assert result.quantity == 5, "Количество должно сложиться (3 + 2)"
-    assert result.description == 'Новый телефон', "Описание должно обновиться"
+    assert result.description == "Новый телефон", "Описание должно обновиться"
 
 
 def test_price_getter() -> None:
     """Тестирует получение цены через геттер."""
-    product = Product('Планшет', '10 дюймов', 35000.0, 4)
+    product = Product("Планшет", "10 дюймов", 35000.0, 4)
 
     # Получаем цену через геттер
     price = product.price
@@ -180,7 +181,7 @@ def test_price_getter() -> None:
 
 def test_price_setter_increase() -> None:
     """Тестирует установку более высокой цены."""
-    product = Product('Монитор', '24 дюйма', 15000.0, 6)
+    product = Product("Монитор", "24 дюйма", 15000.0, 6)
 
     # Повышаем цену
     product.price = 18000.0
@@ -190,7 +191,7 @@ def test_price_setter_increase() -> None:
 
 def test_price_setter_negative() -> None:
     """Тестирует попытку установить отрицательную цену."""
-    product = Product('Клавиатура', 'Механическая', 5000.0, 10)
+    product = Product("Клавиатура", "Механическая", 5000.0, 10)
 
     # Пытаемся установить отрицательную цену
     product.price = -1000.0
@@ -201,10 +202,38 @@ def test_price_setter_negative() -> None:
 
 def test_price_setter_zero() -> None:
     """Тестирует попытку установить нулевую цену."""
-    product = Product('Мышь', 'Беспроводная', 3000.0, 15)
+    product = Product("Мышь", "Беспроводная", 3000.0, 15)
 
     # Пытаемся установить нулевую цену
     product.price = 0
 
     # Цена должна остаться прежней
     assert product.price == 3000.0
+
+
+def test_product_str(sample_product: Product) -> None:
+    """
+    Проверяет, что метод __str__ возвращает строку в ожидаемом формате.
+    Формат: "Название продукта, цена руб. Остаток: количество шт."
+    """
+    expected = "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт."
+    assert str(sample_product) == expected
+
+
+def test_add_two_products(sample_product: Product, another_product: Product) -> None:
+    """Проверяет сложение двух продуктов: сумма цен, умноженных на количество."""
+    total_value = sample_product + another_product
+    expected = (180000.0 * 5) + (2000.0 * 3)  # 900000 + 6000 = 906000
+    assert total_value == expected
+
+
+def test_add_with_non_product_raises_error(sample_product: Product) -> None:
+    """Проверяет, что при попытке сложить Product с объектом другого типа выбрасывается ValueError."""
+    with pytest.raises(ValueError, match="не является объектом класса Product"):
+        _ = sample_product + "строка"  # type: ignore
+
+
+def test_add_with_none_raises_error(sample_product: Product) -> None:
+    """Проверка сложения с None."""
+    with pytest.raises(ValueError):
+        _ = sample_product + None  # type: ignore
