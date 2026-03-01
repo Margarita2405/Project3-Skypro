@@ -17,14 +17,14 @@ class Product:
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, product_data: Dict[str, Any], products_list: Optional[List['Product']] = None) -> 'Product':
+    def new_product(cls, product_data: Dict[str, Any], products_list: Optional[List["Product"]] = None) -> "Product":
         """Класс-метод для создания объекта Product из словаря с параметрами. Проверяет наличие товара с таким же
         именем в списке products_list."""
         # Извлекаем параметры из словаря
-        name: str = product_data.get('name', '')
-        description: str = product_data.get('description', '')
-        price: float = product_data.get('price', 0.0)
-        quantity: int = product_data.get('quantity', 0)
+        name: str = product_data.get("name", "")
+        description: str = product_data.get("description", "")
+        price: float = product_data.get("price", 0.0)
+        quantity: int = product_data.get("quantity", 0)
 
         # Если передан список товаров, ищем дубликаты
         if products_list:
@@ -38,8 +38,10 @@ class Product:
                     # Обновляем описание (можно оставить старое или заменить на новое)
                     # Здесь заменяем на новое описание
                     existing_product.description = description
-                    print(f"Товар '{name}' уже существует. Обновлено: "
-                          f"цена={existing_product.price}, количество={existing_product.quantity}")
+                    print(
+                        f"Товар '{name}' уже существует. Обновлено: "
+                        f"цена={existing_product.price}, количество={existing_product.quantity}"
+                    )
                     return existing_product
 
         # Если дубликатов не найдено или список не передан, создаем новый объект
@@ -54,7 +56,7 @@ class Product:
     @price.setter
     def price(self, new_price: float) -> None:
         """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При понижении цены
-        запрашивает потверждение у пользователя."""
+        запрашивает подтверждение у пользователя."""
         # Проверка на нулевую или отрицательную цену
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
@@ -63,15 +65,28 @@ class Product:
         # Если цена понижается, запрашиваем подтверждение у пользователя
         if new_price < self.__price:
             print(f"Внимание! Цена понижается с {self.__price} до {new_price}.")
-            response = input("Вы уверены, что хотите понизить цену? Если согласны, введите (y), для отмены "
-                             "введите (n): ")
+            response = input(
+                "Вы уверены, что хотите понизить цену? Если согласны, введите (y), для отмены " "введите (n): "
+            )
 
-            if response.lower() != 'y':
+            if response.lower() != "y":
                 print("Изменение цены отменено пользователем.")
                 return
         # Установка новой цены
         self.__price = new_price
         print(f"Установлена цена продукта: {self.__price} руб.")
+
+    def __str__(self) -> str:
+        """Возвращает строку в формате: Название продукта, цена руб. Остаток: количество шт."""
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество всех товаров
+        в наличии."""
+        if isinstance(other, Product):
+            return (self.__price * self.quantity) + (other.__price * other.quantity)
+        else:
+            raise ValueError(f"Ошибка: {other} не является объектом класса Product.")
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -95,8 +110,13 @@ if __name__ == "__main__":  # pragma: no cover
     print(product3.quantity)
 
     new_product = Product.new_product(
-        {"name": "Samsung Galaxy S23 Ultra", "description": "256GB, Серый цвет, 200MP камера", "price": 180000.0,
-         "quantity": 5})
+        {
+            "name": "Samsung Galaxy S23 Ultra",
+            "description": "256GB, Серый цвет, 200MP камера",
+            "price": 180000.0,
+            "quantity": 5,
+        }
+    )
     if new_product:
         print(new_product.name)
         print(new_product.description)
@@ -110,3 +130,11 @@ if __name__ == "__main__":  # pragma: no cover
         print(new_product.price)
         new_product.price = 0
         print(new_product.price)
+
+        print(str(product1))
+        print(str(product2))
+        print(str(product3))
+
+        print(product1 + product2)
+        print(product1 + product3)
+        print(product2 + product3)
