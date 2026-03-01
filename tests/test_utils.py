@@ -20,8 +20,10 @@ def test_read_json_valid_file(valid_data_file: str) -> None:
     # Проверяем первую категорию
     first_category = data[0]
     assert first_category["name"] == "Смартфоны"
-    assert first_category["description"] == ("Смартфоны, как средство не только коммуникации, но и получение "
-                                             "дополнительных функций для удобства жизни")
+    assert first_category["description"] == (
+        "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций"
+        "для удобства жизни"
+    )
 
     assert "products" in first_category, "В категории должен быть ключ 'products'"
     assert isinstance(first_category["products"], list), "products должен быть списком"
@@ -38,7 +40,7 @@ def test_read_json_valid_file(valid_data_file: str) -> None:
     second_category = data[1]
     assert second_category["name"] == "Телевизоры"
     assert len(second_category["products"]) == 1
-    assert second_category["products"][0]["name"] == "55\" QLED 4K"
+    assert second_category["products"][0]["name"] == '55" QLED 4K'
 
 
 def test_read_json_file_not_found() -> None:
@@ -49,8 +51,7 @@ def test_read_json_file_not_found() -> None:
 
     # Проверяем, что ошибка действительно произошла
     # Можно проверить текст ошибки, если нужно
-    assert "No such file or directory" in str(error_info.value) or \
-           "не найден" in str(error_info.value)
+    assert "No such file or directory" in str(error_info.value) or "не найден" in str(error_info.value)
 
 
 def test_read_json_invalid_syntax(invalid_syntax_file: str) -> None:
@@ -100,15 +101,15 @@ def test_create_objects_from_json_simple() -> None:
         {
             "name": "Смартфоны",
             "description": "Смартфоны, как средство не только коммуникации, но и получение дополнительных"
-                           "функций для удобства жизни",
+            "функций для удобства жизни",
             "products": [
                 {
                     "name": "Samsung Galaxy C23 Ultra",
                     "description": "256GB, Серый цвет, 200MP камера",
                     "price": 180000.0,
-                    "quantity": 5
+                    "quantity": 5,
                 }
-            ]
+            ],
         }
     ]
 
@@ -123,8 +124,9 @@ def test_create_objects_from_json_simple() -> None:
     category = categories[0]
     assert isinstance(category, Category)
     assert category.name == "Смартфоны"
-    assert category.description == ("Смартфоны, как средство не только коммуникации, но и получение дополнительных"
-                                    "функций для удобства жизни")
+    assert category.description == (
+        "Смартфоны, как средство не только коммуникации, но и получение дополнительных" "функций для удобства жизни"
+    )
 
     # Проверяем товары
     assert isinstance(category._Category__products, list)
@@ -143,7 +145,7 @@ def test_read_json_invalid_encoding(tmp_path: Path) -> None:
     # Создаем файл в неправильной кодировке (например, UTF-16)
     file_path = tmp_path / "invalid_encoding.json"
     content = '{"test": "data"}'
-    file_path.write_bytes(content.encode('utf-16'))
+    file_path.write_bytes(content.encode("utf-16"))
 
     # Попытка чтения с UTF-8 должна вызвать ошибку
     with pytest.raises(UnicodeDecodeError):
@@ -204,13 +206,7 @@ def test_create_objects_from_json_no_products_key() -> None:
 
 def test_create_objects_from_json_empty_products() -> None:
     """Тестирование создания категории с пустым списком товаров."""
-    test_data = [
-        {
-            "name": "Пустая категория",
-            "description": "Без товаров",
-            "products": []  # Пустой список товаров
-        }
-    ]
+    test_data = [{"name": "Пустая категория", "description": "Без товаров", "products": []}]  # Пустой список товаров
 
     categories = create_objects_from_json(test_data)
 
@@ -227,14 +223,7 @@ def test_create_objects_with_none_values() -> None:
         {
             "name": None,
             "description": None,
-            "products": [
-                {
-                    "name": None,
-                    "description": None,
-                    "price": None,
-                    "quantity": None
-                }
-            ]
+            "products": [{"name": None, "description": None, "price": None, "quantity": None}],
         }
     ]
 
@@ -246,13 +235,7 @@ def test_create_objects_with_none_values() -> None:
 
 def test_create_objects_empty_category_name() -> None:
     """Тестирование создания категории с пустым именем."""
-    test_data = [
-        {
-            "name": "",  # Пустое имя
-            "description": "Описание",
-            "products": []
-        }
-    ]
+    test_data = [{"name": "", "description": "Описание", "products": []}]  # Пустое имя
 
     categories = create_objects_from_json(test_data)
     assert categories[0].name == ""
@@ -269,9 +252,9 @@ def test_create_objects_large_quantity() -> None:
                     "name": "Товар",
                     "description": "Описание",
                     "price": 100.0,
-                    "quantity": 10_000_000  # Большое количество
+                    "quantity": 10_000_000,  # Большое количество
                 }
-            ]
+            ],
         }
     ]
 
@@ -281,13 +264,7 @@ def test_create_objects_large_quantity() -> None:
 
 def test_create_objects_malformed_products() -> None:
     """Тестирование с некорректным списком товаров."""
-    test_data = [
-        {
-            "name": "Категория",
-            "description": "Описание",
-            "products": "not a list"  # Не список!
-        }
-    ]
+    test_data = [{"name": "Категория", "description": "Описание", "products": "not a list"}]  # Не список!
 
     with pytest.raises(TypeError):
         create_objects_from_json(test_data)
@@ -303,8 +280,8 @@ def test_create_objects_product_as_dict_instead_of_list() -> None:
                 "name": "Товар",
                 "description": "Описание",
                 "price": 100.0,
-                "quantity": 5
-            }
+                "quantity": 5,
+            },
         }
     ]
 
@@ -320,16 +297,14 @@ def test_create_objects_preserves_order() -> None:
             "description": "Описание первой",
             "products": [
                 {"name": "Товар 1", "description": "Описание", "price": 100, "quantity": 1},
-                {"name": "Товар 2", "description": "Описание", "price": 200, "quantity": 2}
-            ]
+                {"name": "Товар 2", "description": "Описание", "price": 200, "quantity": 2},
+            ],
         },
         {
             "name": "Вторая категория",
             "description": "Описание второй",
-            "products": [
-                {"name": "Товар 3", "description": "Описание", "price": 300, "quantity": 3}
-            ]
-        }
+            "products": [{"name": "Товар 3", "description": "Описание", "price": 300, "quantity": 3}],
+        },
     ]
 
     categories = create_objects_from_json(test_data)
