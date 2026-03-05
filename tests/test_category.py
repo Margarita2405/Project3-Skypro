@@ -1,5 +1,6 @@
 from src.product import Product
 from src.category import Category
+from typing import List
 
 
 def test_category_init(first_category: Category, second_category: Category) -> None:
@@ -209,3 +210,19 @@ def test_empty_category() -> None:
     category = Category("Пустая", "Нет товаров", [])
 
     assert category.products == "", "Пустая категория должна возвращать пустую строку"
+
+
+def test_category_str(category: Category, products_list: List[Product]) -> None:
+    """
+    Проверяет, что метод __str__ возвращает строку вида:
+    "Название категории, количество продуктов: сумма количеств товаров шт."
+    """
+    expected = "Тестовая категория, количество продуктов: 10 шт."
+    assert str(category) == expected
+
+
+def test_str_empty_category() -> None:
+    """Проверяет строковое представление пустой категории."""
+    empty_category = Category("Пустая", "Без товаров", [])
+    expected = "Пустая, количество продуктов: 0 шт."
+    assert str(empty_category) == expected

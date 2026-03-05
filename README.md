@@ -10,8 +10,8 @@
 
 ## Цель проекта:
 
-Основная цель проекта -упростить и удешевить создание профессиональных
-онлайн-магазинов, предоставив разаработчикам и бизнесу:
+Основная цель проекта - упростить и удешевить создание профессиональных
+онлайн-магазинов, предоставив разработчикам и бизнесу:
 * Готовый набор ключевых функций (каталог, корзина, доставка)
 * Гибкую архитектуру для интеграции
 * Высокую производительность и оптимизацию
@@ -39,7 +39,12 @@
 3. @price.setter
    def price(self, new_price: float) -> None:
        """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При
-       понижении цены запрашивает потверждение у пользователя."""
+       понижении цены запрашивает подтверждение у пользователя."""
+4. def __str__(self) -> str:
+        """Возвращает строку в формате: Название продукта, цена руб. Остаток: количество шт."""
+5. def __add__(self, other: "Product") -> float:
+        """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество
+        всех товаров в наличии."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
@@ -55,6 +60,14 @@ print(new_product.name)
 print(new_product.description)
 print(new_product.price)
 print(new_product.quantity)
+
+print(str(product1))
+print(str(product2))
+print(str(product3))
+
+print(product1 + product2)
+print(product1 + product3)
+print(product2 + product3)
 
 ### `class Category`
 Класс для представления категорий продукции.
@@ -74,6 +87,8 @@ print(new_product.quantity)
 2. @property
    def products(self) -> str:
        """Геттер, который будет выводить список товаров в виде строк."""
+3. def __str__(self) -> str:
+        """Возвращает строку с названием категории и общим количеством всех продуктов."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
@@ -85,11 +100,50 @@ print(category1.description)
 print(len(category1.products))
 print(category1.category_count)
 print(category1.product_count)
+print(str(category1))
+
+print(category1.products)
+print(str(category2))
+print(category2.products)
+
+### `class ProductIterator`
+Итератор для перебора товаров одной категории.
+
+**Параметры инициализации:**
+- `category_obj` (Category): Объект класса категории.
+- `index` (int): Индекс.
+- `products` (list): Список товаров категории.
+
+**Основные методы:**
+1. def __iter__(self) -> 'ProductIterator':
+        """Возвращает итератор."""
+2. def __next__(self) -> Product:
+        """Возвращает следующий очередной товар категории."""
+
+**Пример:**
+product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+category1 = Category(
+    "Смартфоны",
+    "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+    [product1, product2, product3],
+)
+
+iterator = ProductIterator(category1)
+
+for product in iterator:
+    print(product)
+print()
+for product in iterator:
+    print(product)
 
 ## Использование классов:
 
 from src.product.py import Product
 from src.category.py import Category
+from src.product_iterator.py import ProductIterator
 
 ## Функциональность:
 
@@ -119,7 +173,23 @@ def price(self) -> float:
 @price.setter
 def price(self, new_price: float) -> None:
     """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При
-    понижении цены запрашивает потверждение у пользователя."""
+    понижении цены запрашивает подтверждение у пользователя."""
+8. **Метод __str__ рассчитывает общее количество товаров на складе**
+def __str__(self) -> str:
+    """Возвращает строку в формате: Название продукта, цена руб. Остаток: количество шт."""
+9. **Метод сложения __add__ возвращает полную стоимость всех товаров на складе.**
+def __add__(self, other: "Product") -> float:
+    """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество
+    всех товаров в наличии."""
+10. **Возвращает строку для класса Category**
+def __str__(self) -> str:
+    """Возвращает строку с названием категории и общим количеством всех продуктов."""
+11. **Итератор для перебора товаров одной категории**    
+def __iter__(self) -> 'ProductIterator':
+    """Возвращает итератор."""
+12. **Метод __next__ для перехода к следующему товару категории**     
+def __next__(self) -> Product:
+    """Возвращает следующий очередной товар категории."""
 
 ## Использование функций:
 
@@ -171,7 +241,9 @@ conftest.py.
 *   `sample_product`: содержит тестовые данные с описанием продукции.
 *   `sample_category`: содержит тестовые данные с описанием категории продукции.
 *   `first_category`: содержит тестовые данные с примером первой категории товаров. 
-*   `second_category`: содержит тестовые данные с примером второй категории товаров. 
+*   `second_category`: содержит тестовые данные с примером второй категории товаров.
+*   `another_product`: содержит тестовые данные с другим товаром.
+*   `category`: возвращает экземпляр класса Category с товарами.
 
 ## Параметризация
   
@@ -198,6 +270,7 @@ conftest.py.
     pytest tests/test_product.py
     pytest tests/test_category.py
     pytest tests/test_utils.py
+    pytest tests/test_product_iterator.py
     
     ```
 3. Ожидаемый результат.

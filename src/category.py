@@ -31,8 +31,13 @@ class Category:
         """Геттер, который будет выводить список товаров в виде строк."""
         products_str = ""
         for product in self.__products:
-            products_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+            products_str += f"{str(product)} \n"
         return products_str
+
+    def __str__(self) -> str:
+        """Возвращает строку с названием категории и общим количеством всех продуктов."""
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -66,3 +71,11 @@ if __name__ == "__main__":  # pragma: no cover
 
     print(Category.category_count)
     print(Category.product_count)
+
+    print(str(category1))
+
+    print(category1.products)
+
+    print(str(category2))
+
+    print(category2.products)
