@@ -1,6 +1,7 @@
+import pytest
 from src.product import Product
 from src.category import Category
-from typing import List
+from typing import List, Any
 
 
 def test_category_init(first_category: Category, second_category: Category) -> None:
@@ -55,6 +56,39 @@ def test_products_in_category(sample_category: Category) -> None:
     """Тест, что товары в категории являются объектами класса Product."""
     for product in sample_category._Category__products:
         assert isinstance(product, Product)
+
+
+@pytest.mark.parametrize(
+    "invalid_object",
+    [
+        "строка",
+        123,
+        45.6,
+        None,
+        [],
+        {},
+        object(),
+        (1, 2),
+        set(),
+    ],
+)
+def test_add_product_invalid_type_raises_typeerror(category: Category, invalid_object: Any) -> None:
+    """Тест проверяет, что при попытке добавить объект, не являющийся экземпляром Product
+    или его наследника, метод add_product выбрасывает TypeError с ожидаемым сообщением,
+    и при этом состояние категории и общий счётчик продуктов не изменяются."""
+    # Сохраняем исходное состояние
+    initial_products = category._Category__products[:]  # копируем приватный список
+    initial_count = Category.product_count
+
+    # Проверяем, что возникает исключение с правильным текстом
+    with pytest.raises(
+        TypeError, match="Ошибка: нельзя добавлять вместо продукта или его наследников" " любой другой объект."
+    ):
+        category.add_product(invalid_object)
+
+    # Убеждаемся, что состояние не изменилось
+    assert category._Category__products == initial_products
+    assert Category.product_count == initial_count
 
 
 def test_category_counters_after_creating_categories() -> None:
