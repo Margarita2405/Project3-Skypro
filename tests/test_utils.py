@@ -21,8 +21,7 @@ def test_read_json_valid_file(valid_data_file: str) -> None:
     first_category = data[0]
     assert first_category["name"] == "Смартфоны"
     assert first_category["description"] == (
-        "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций"
-        "для удобства жизни"
+        "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций" "для удобства жизни"
     )
 
     assert "products" in first_category, "В категории должен быть ключ 'products'"
