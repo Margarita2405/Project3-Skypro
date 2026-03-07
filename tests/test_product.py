@@ -228,12 +228,12 @@ def test_add_two_products(sample_product: Product, another_product: Product) -> 
 
 
 def test_add_with_non_product_raises_error(sample_product: Product) -> None:
-    """Проверяет, что при попытке сложить Product с объектом другого типа выбрасывается ValueError."""
-    with pytest.raises(ValueError, match="не является объектом класса Product"):
-        _ = sample_product + "строка"  # type: ignore
+    """Проверяет, что при попытке сложить Product с объектом другого типа выбрасывается TypeError."""
+    with pytest.raises(TypeError, match="Ошибка: нельзя сложить объекты разных классов."):
+        sample_product + "строка"  # type: ignore
 
 
 def test_add_with_none_raises_error(sample_product: Product) -> None:
     """Проверка сложения с None."""
-    with pytest.raises(ValueError):
-        _ = sample_product + None  # type: ignore
+    with pytest.raises(TypeError, match="Ошибка: нельзя сложить объекты разных классов."):
+        sample_product + None  # type: ignore
