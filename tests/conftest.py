@@ -2,9 +2,13 @@ import pytest
 import json
 
 from pathlib import Path
+
+from src.lawngrass import LawnGrass
 from src.product import Product
 from src.category import Category
 from typing import List
+
+from src.smartphone import Smartphone
 
 
 class TestProduct:
@@ -104,7 +108,7 @@ def valid_data_content() -> str:
             {
                 "name": "Смартфоны",
                 "description": "Смартфоны, как средство не только коммуникации, но и получение дополнительных функций"
-                               "для удобства жизни",
+                "для удобства жизни",
                 "products": [
                     {
                         "name": "Samsung Galaxy C23 Ultra",
@@ -119,7 +123,7 @@ def valid_data_content() -> str:
             {
                 "name": "Телевизоры",
                 "description": "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим"
-                               "другом и помощником",
+                "другом и помощником",
                 "products": [
                     {"name": '55" QLED 4K', "description": "Фоновая подсветка", "price": 123000.0, "quantity": 7}
                 ],
@@ -221,3 +225,29 @@ def special_chars_file(tmp_path: Path) -> str:
     ]
     file_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     return str(file_path)
+
+
+@pytest.fixture
+def product_smartphone1() -> Smartphone:
+    """Фикстура для первого экземпляра класса-наследника Smartphone."""
+    return Smartphone(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5, "S23 Ultra", 256, "Серый"
+    )
+
+
+@pytest.fixture
+def product_smartphone2() -> Smartphone:
+    """Фикстура для второго экземпляра класса-наследника Smartphone."""
+    return Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
+
+
+@pytest.fixture
+def product_grass1() -> LawnGrass:
+    """Фикстура для первого экземпляра класса-наследника LawnGrass."""
+    return LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
+
+
+@pytest.fixture
+def product_grass2() -> LawnGrass:
+    """Фикстура для второго экземпляра класса-наследника LawnGrass."""
+    return LawnGrass("Газонная трава 2", "Выносливая трава", 450.0, 15, "США", "5 дней", "Темно-зеленый")
