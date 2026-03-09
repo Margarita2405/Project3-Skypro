@@ -83,10 +83,10 @@ class Product:
     def __add__(self, other: "Product") -> float:
         """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество всех товаров
         в наличии."""
-        if isinstance(other, Product):
+        if type(other) is Product:
             return (self.__price * self.quantity) + (other.__price * other.quantity)
         else:
-            raise ValueError(f"Ошибка: {other} не является объектом класса Product.")
+            raise TypeError("Ошибка: нельзя сложить объекты разных классов.")
 
 
 if __name__ == "__main__":  # pragma: no cover
