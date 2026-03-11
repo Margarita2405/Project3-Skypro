@@ -2,11 +2,12 @@ import pytest
 import json
 
 from pathlib import Path
-
 from src.lawngrass import LawnGrass
 from src.product import Product
 from src.category import Category
-from typing import List
+from src.order import Order
+from typing import List, Generator
+
 
 from src.smartphone import Smartphone
 
@@ -29,6 +30,15 @@ def another_product() -> Product:
 
 class TestCategory:
     """Тесты для класса Category."""
+
+
+@pytest.fixture(autouse=True)
+def reset_counters() -> Generator[None, None, None]:
+    """Сбрасывает счётчики категорий, продуктов и заказов перед каждым тестом."""
+    Category.category_count = 0
+    Category.product_count = 0
+    Order.order_count = 0
+    yield
 
 
 @pytest.fixture
