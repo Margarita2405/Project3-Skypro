@@ -1,5 +1,6 @@
 from src.product import Product
 from src.lawngrass import LawnGrass
+from src.base_product import BaseProduct
 
 
 class Smartphone(Product):
@@ -25,7 +26,7 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
-    def __add__(self, other: "Product") -> float:
+    def __add__(self, other: "BaseProduct") -> float:
         """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество всех товаров
         в наличии."""
         if type(other) is Smartphone:
