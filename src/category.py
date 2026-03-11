@@ -1,11 +1,13 @@
 from typing import List
+
+from src.base_entity import BaseEntity
 from src.product import Product
 from src.smartphone import Smartphone
 from src.lawngrass import LawnGrass
 
 
-class Category:
-    """Класс для представления категорий продукции."""
+class Category(BaseEntity):
+    """Класс для представления категорий продукции (наследник BaseEntity)."""
 
     name: str
     description: str
@@ -17,8 +19,7 @@ class Category:
     product_count = 0
 
     def __init__(self, name: str, description: str, products: List[Product]) -> None:
-        self.name = name
-        self.description = description
+        super().__init__(name, description)
         self.__products: List[Product] = products if products else []
         Category.category_count += 1
         Category.product_count += len(products) if products else 0
@@ -38,6 +39,10 @@ class Category:
         for product in self.__products:
             products_str += f"{str(product)} \n"
         return products_str
+
+    def total_cost(self) -> float:
+        """Суммарная стоимость всех товаров в категории."""
+        return float(sum(product.price * product.quantity for product in self.__products))
 
     def __str__(self) -> str:
         """Возвращает строку с названием категории и общим количеством всех продуктов."""
