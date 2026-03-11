@@ -19,8 +19,53 @@
 
 ## Документация классов:
 
-### `class Product`
-Класс для представления продукции.
+### `class BaseProduct(ABC)`
+Абстрактный базовый класс для всех продуктов.
+
+**Параметры инициализации:**
+- `name` (str): Название товара.
+- `description` (str): Описание товара.
+- `price` (float): Цена товара.
+- `quantity` (int): Количество товара в наличии.
+
+**Основные методы:**
+
+1. @property
+   def price(self) -> float:
+       """Геттер возвращает текущую цену товара."""
+2. @price.setter
+   def price(self, new_price: float) -> None:
+       """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная. При
+       понижении цены запрашивает подтверждение у пользователя."""
+3. def __str__(self) -> str:
+        """Возвращает строку в формате: Название продукта, цена руб. Остаток: количество шт."""
+4. @abstractmethod
+   def __add__(self, other: "BaseProduct") -> float:
+        """Абстрактный метод сложения товара — каждый наследник реализует свою логику."""
+5. @classmethod
+   @abstractmethod
+   def new_product(
+       cls, product_data: Dict[str, Any], products_list: Optional[Sequence["BaseProduct"]] = None
+   ) -> "BaseProduct":
+        """Абстрактный метод для корректного создания объектов с учётом дополнительных полей — 
+        должен быть переопределён в наследниках."""
+
+### class PrintMixin:
+Класс-миксин для печати в консоль информации об объекте с указанием его класса и параметров.
+
+**Параметры инициализации:**
+- `name` (str): Название товара.
+- `description` (str): Описание товара.
+- `price` (float): Цена товара.
+- `quantity` (int): Количество товара в наличии.
+
+**Основные методы:** 
+
+1. def __repr__(self) -> str:
+        """Метод для отображения информации об объекте класса."""
+
+### `class Product(BaseProduct, PrintMixin)`
+Класс для представления продукции (наследник BaseProduct, PrintMixin).
 
 **Параметры инициализации:**
 - `name` (str): Название товара.
@@ -69,8 +114,21 @@ print(product1 + product2)
 print(product1 + product3)
 print(product2 + product3)
 
-### `class Category`
-Класс для представления категорий продукции.
+### `class BaseEntity(ABC)`:
+Абстрактный базовый класс для сущностей, имеющих название и описание.
+
+**Параметры инициализации:**
+- `name` (str): Название.
+- `description` (str): Описание.
+
+**Основные методы:**
+1.  @abstractmethod
+    def total_cost(self) -> float:
+        """Абстрактный метод для вычисления общей стоимости. Должен быть переопределён
+        в наследниках."""
+
+### `class Category(BaseEntity)`
+Класс для представления категорий продукции (наследник BaseEntity).
 
 **Параметры инициализации:**
 - `name` (str): Название категории.
@@ -90,6 +148,8 @@ print(product2 + product3)
        """Геттер, который будет выводить список товаров в виде строк."""
 3. def __str__(self) -> str:
         """Возвращает строку с названием категории и общим количеством всех продуктов."""
+4. def total_cost(self) -> float:
+        """Суммарная стоимость всех товаров в категории."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
@@ -179,7 +239,7 @@ for product in iterator:
 - `color` (str): Цвет товара.
 
 **Основные методы:**
-1. def __add__(self, other: Product) -> float:
+1. def __add__(self, other: BaseProduct) -> float:
         """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество
         всех товаров в наличии. Вызывает ошибку TypeError при сложении объектов разных классов."""
 
@@ -243,7 +303,7 @@ print("Не возникла ошибка TypeError при попытке сло
 - `color` (str): Цвет товара.
 
 **Основные методы:**
-1. def __add__(self, other: Product) -> float:
+1. def __add__(self, other: BaseProduct) -> float:
         """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество
         всех товаров в наличии. Вызывает ошибку TypeError при сложении объектов разных классов."""
 
@@ -270,10 +330,55 @@ print(grass2.color)
 grass_sum = grass1 + grass2
 print(grass_sum)
 
+### class Order(BaseEntity):
+Класс для представления заказа (один товар), наследник BaseEntity.
+
+**Переменные на уровне класса:**
+
+- `order_count` (int): Количество заказов.
+
+**Параметры инициализации:**
+- `name` (str): Название заказа (например, "Заказ №1").
+- `description` (str): Описание заказа.
+- `product` (str): Товар (объект класса Product или его наследника).
+- `quantity` (int): Количество единиц товара.
+
+**Основные методы:**
+    
+1. def total_cost(self) -> float:
+        """Итоговая стоимость заказа."""
+
+2. def __str__(self) -> str:
+        """Возвращает строку с информацией о заказе."""
+
+3. **Пример:**
+
+# Создаем товары
+product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+# Создаем категорию
+category1 = Category(
+    "Смартфоны",
+    "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+    [product1, product2, product3],
+    )
+print(category1)
+print(f"Общая стоимость товаров в категории: {category1.total_cost()} руб.")
+
+# Создаем заказ
+order = Order("Заказ №1", "Срочная доставка", product1, 2)
+print(order)
+
 ## Использование классов:
 
+from src.base_product import BaseProduct
+from src.print_mixin import PrintMixin
 from src.product.py import Product
+from src.base_entity import BaseEntity
 from src.category.py import Category
+from src.order import Order
 from src.product_iterator.py import ProductIterator
 from src.smartphone.py import Smartphone
 from src.lawngrass.py import Lawngrass
@@ -323,6 +428,35 @@ def __iter__(self) -> 'ProductIterator':
 12. **Метод __next__ для перехода к следующему товару категории**     
 def __next__(self) -> Product:
     """Возвращает следующий очередной товар категории."""
+13. **Абстрактный метод для вычисления общей стоимости заказа**
+@abstractmethod
+def total_cost(self) -> float:
+    """Абстрактный метод для вычисления общей стоимости. Должен быть переопределён
+    в наследниках."""
+14. **Абстрактный метод сложения товара**
+@abstractmethod
+def __add__(self, other: "BaseProduct") -> float:
+    """Абстрактный метод сложения товара — каждый наследник реализует свою логику."""
+15. **Абстрактный метод для корректного создания объектов**      
+@classmethod
+@abstractmethod
+def new_product(
+    cls, product_data: Dict[str, Any], products_list: Optional[Sequence["BaseProduct"]] = None
+) -> "BaseProduct":
+    """Абстрактный метод для корректного создания объектов с учётом дополнительных полей — должен быть
+    переопределён в наследниках."""
+16. **Расчет суммарной стоимости всех товаров в категории класса Category**    
+def total_cost(self) -> float:
+    """Суммарная стоимость всех товаров в категории."""
+17. **Возвращает строку для класса Order**    
+def __str__(self) -> str:
+    """Возвращает строку с информацией о заказе."""
+18. **Расчет итоговой стоимости заказа класса Order**    
+def total_cost(self) -> float:
+    """Итоговая стоимость заказа."""
+19. **Печать информации об объекте класса**     
+def __repr__(self) -> str:
+        """Метод для отображения информации об объекте класса."""
 
 ## Использование функций:
 
@@ -375,6 +509,7 @@ conftest.py.
 *   `sample_category`: содержит тестовые данные с описанием категории продукции.
 *   `first_category`: содержит тестовые данные с примером первой категории товаров. 
 *   `second_category`: содержит тестовые данные с примером второй категории товаров.
+*   `reset_counters`: сбрасывает счётчики категорий, продуктов и заказов перед каждым тестом.
 *   `another_product`: содержит тестовые данные с другим товаром.
 *   `category`: возвращает экземпляр класса Category с товарами.
 *   `product_smartphone1`: содержит тестовые данные с примером первого экземпляра
@@ -420,6 +555,10 @@ conftest.py.
     pytest tests/test_product_iterator.py
     pytest tests/test_smartphone.py
     pytest tests/test_lawngrass.py
+    pytest tests/test_base_intity.py
+    pytest tests/test_base_product.py
+    pytest tests/test_order.py
+    pytest tests/test_print_mixin.py
     
     ```
 3. Ожидаемый результат.
