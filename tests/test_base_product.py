@@ -1,7 +1,8 @@
 import pytest
+from pytest import CaptureFixture
+
 from src.base_product import BaseProduct
 from src.product import Product
-from pytest import CaptureFixture
 
 
 def test_base_product_abstract() -> None:

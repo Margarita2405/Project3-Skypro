@@ -1,14 +1,13 @@
-import pytest
 import json
-
 from pathlib import Path
-from src.lawngrass import LawnGrass
-from src.product import Product
+from typing import Generator, List
+
+import pytest
+
 from src.category import Category
+from src.lawngrass import LawnGrass
 from src.order import Order
-from typing import List, Generator
-
-
+from src.product import Product
 from src.smartphone import Smartphone
 
 

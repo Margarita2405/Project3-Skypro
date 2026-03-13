@@ -1,4 +1,5 @@
 import pytest
+
 from src.base_entity import BaseEntity
 
 

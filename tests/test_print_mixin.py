@@ -1,5 +1,6 @@
-from src.product import Product
 from pytest import CaptureFixture
+
+from src.product import Product
 
 
 def test_print_mixin_on_creation(capsys: CaptureFixture[str]) -> None:

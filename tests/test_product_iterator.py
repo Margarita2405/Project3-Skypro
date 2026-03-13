@@ -1,8 +1,10 @@
-import pytest
-from src.product import Product
-from src.category import Category
-from src.product_iterator import ProductIterator
 from typing import List
+
+import pytest
+
+from src.category import Category
+from src.product import Product
+from src.product_iterator import ProductIterator
 
 
 def test_iterator_returns_products_in_order(category_products: Category, products: List[Product]) -> None:

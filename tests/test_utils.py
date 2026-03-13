@@ -1,10 +1,11 @@
-import pytest
 import json
-
 from pathlib import Path
-from src.utils import read_json, create_objects_from_json
-from src.product import Product
+
+import pytest
+
 from src.category import Category
+from src.product import Product
+from src.utils import create_objects_from_json, read_json
 
 
 def test_read_json_valid_file(valid_data_file: str) -> None:

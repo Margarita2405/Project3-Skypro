@@ -1,6 +1,6 @@
-from src.product import Product
-from src.lawngrass import LawnGrass
 from src.base_product import BaseProduct
+from src.lawngrass import LawnGrass
+from src.product import Product
 
 
 class Smartphone(Product):

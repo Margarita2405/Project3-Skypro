@@ -1,7 +1,9 @@
+from typing import Any, List
+
 import pytest
-from src.product import Product
+
 from src.category import Category
-from typing import List, Any
+from src.product import Product
 
 
 def test_category_init(first_category: Category, second_category: Category) -> None:

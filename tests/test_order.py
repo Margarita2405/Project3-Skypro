@@ -1,7 +1,7 @@
 from src.category import Category
-from src.product import Product
-from src.order import Order
 from src.lawngrass import LawnGrass
+from src.order import Order
+from src.product import Product
 from src.smartphone import Smartphone
 
 

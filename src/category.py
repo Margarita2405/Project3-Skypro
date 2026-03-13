@@ -1,9 +1,9 @@
 from typing import List
 
 from src.base_entity import BaseEntity
+from src.lawngrass import LawnGrass
 from src.product import Product
 from src.smartphone import Smartphone
-from src.lawngrass import LawnGrass
 
 
 class Category(BaseEntity):

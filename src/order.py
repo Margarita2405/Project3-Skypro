@@ -1,6 +1,6 @@
 from src.base_entity import BaseEntity
-from src.product import Product
 from src.category import Category
+from src.product import Product
 
 
 class Order(BaseEntity):
