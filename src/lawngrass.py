@@ -1,3 +1,4 @@
+from src.base_product import BaseProduct
 from src.product import Product
 
 
@@ -22,7 +23,7 @@ class LawnGrass(Product):
         self.germination_period = germination_period
         self.color = color
 
-    def __add__(self, other: Product) -> float:
+    def __add__(self, other: BaseProduct) -> float:
         """Возвращает полную стоимость всех товаров на складе. Умножает стоимость и количество всех товаров
         в наличии."""
         if type(other) is LawnGrass:

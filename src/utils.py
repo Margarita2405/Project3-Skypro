@@ -1,9 +1,9 @@
 import json
 import os
+from typing import Any, Dict, List
 
-from typing import Any, List, Dict
-from src.product import Product
 from src.category import Category
+from src.product import Product
 
 
 def read_json(file_path: str) -> List[Dict[str, Any]]:
