@@ -1,6 +1,7 @@
 from typing import Any, List
 
 import pytest
+from pytest import CaptureFixture
 
 from src.category import Category
 from src.product import Product
@@ -262,3 +263,73 @@ def test_str_empty_category() -> None:
     empty_category = Category("Пустая", "Без товаров", [])
     expected = "Пустая, количество продуктов: 0 шт."
     assert str(empty_category) == expected
+
+
+def test_middle_price_with_products(first_category: Category) -> None:
+    """Проверяет, что метод middle_price корректно вычисляет среднюю цену товаров в категории.
+    Ожидаемое значение: (180000.0 + 210000.0 + 31000.0) / 3 = 140333.33."""
+    # В фикстуре first_category (из conftest.py) три товара с ценами 180000.0, 210000.0, 31000.0
+    expected_middle = (180000.0 + 210000.0 + 31000.0) / 3
+    assert first_category.middle_price() == expected_middle
+
+
+def test_middle_price_empty_category() -> None:
+    """Проверяет, что для пустой категории метод middle_price возвращает 0, избегая деления на ноль."""
+    empty_category = Category("Пустая", "Нет товаров", [])
+    assert empty_category.middle_price() == 0.0
+
+
+def test_middle_price_single_product() -> None:
+    """Проверяет среднюю цену для категории с одним товаром."""
+    product = Product("Один товар", "Описание", 123.45, 1)
+    category = Category("Одиночная", "С одним товаром", [product])
+    assert category.middle_price() == 123.45
+
+
+def test_add_product_zero_quantity(capsys: CaptureFixture[str]) -> None:
+    """
+    Проверяет, что при добавлении продукта с нулевым количеством:
+    - исключение ZeroQuantityProduct перехватывается и выводится сообщение;
+    - товар не добавляется в категорию;
+    - счётчик product_count не увеличивается;
+    - блок finally выводит сообщение о завершении обработки.
+    """
+    category = Category("Категория", "Описание", [])
+    # Создаем продукт с положительным количеством
+    product = Product("Товар", "Описание", 100.0, 5)
+    # Изменяем количество на 0
+    product.quantity = 0
+
+    category.add_product(product)
+
+    # Проверяем, что товар не добавился
+    assert len(category._Category__products) == 0
+    # Счётчик product_count не должен измениться (изначально 0, после добавления не увеличился)
+    assert Category.product_count == 0
+
+    captured = capsys.readouterr()
+    assert "Нельзя добавлять товар с нулевым количеством." in captured.out
+    assert "Обработка добавления товара завершена." in captured.out
+    assert "Товар добавлен успешно." not in captured.out
+
+
+def test_add_product_positive_quantity(capsys: CaptureFixture[str]) -> None:
+    """
+    Проверяет успешное добавление продукта с положительным количеством:
+    - товар добавляется в категорию;
+    - счётчик product_count увеличивается на 1;
+    - выводятся сообщения об успехе и завершении обработки.
+    """
+    category = Category("Категория", "Описание", [])
+    product = Product("Товар", "Описание", 100.0, 5)
+
+    category.add_product(product)
+
+    assert len(category._Category__products) == 1
+    assert category._Category__products[0] == product
+    assert Category.product_count == 1
+
+    captured = capsys.readouterr()
+    assert "Товар добавлен успешно." in captured.out
+    assert "Обработка добавления товара завершена." in captured.out
+    assert "Нельзя добавлять товар с нулевым количеством." not in captured.out
