@@ -18,9 +18,7 @@ class Product(BaseProduct, PrintMixin):
 
     @classmethod
     def new_product(
-            cls,
-            product_data: Dict[str, Any],
-            products_list: Optional[Sequence["BaseProduct"]] = None
+        cls, product_data: Dict[str, Any], products_list: Optional[Sequence["BaseProduct"]] = None
     ) -> "BaseProduct":
         """Класс-метод для создания объекта Product из словаря с параметрами. Проверяет наличие товара с таким же
         именем в списке products_list."""
@@ -110,3 +108,13 @@ if __name__ == "__main__":  # pragma: no cover
         print(product1 + product2)
         print(product1 + product3)
         print(product2 + product3)
+
+    try:
+        product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+    except ValueError:
+        print(
+            "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым"
+            " количеством"
+        )
+    else:
+        print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
