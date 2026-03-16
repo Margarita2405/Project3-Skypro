@@ -1,6 +1,7 @@
 from typing import List
 
 from src.base_entity import BaseEntity
+from src.exceptions import ZeroQuantityProduct
 from src.lawngrass import LawnGrass
 from src.product import Product
 from src.smartphone import Smartphone
@@ -27,8 +28,17 @@ class Category(BaseEntity):
     def add_product(self, product: Product) -> None:
         """Метод для добавления продукта в атрибут products."""
         if isinstance(product, Product):
-            self.__products.append(product)
-            Category.product_count += 1
+            try:
+                if product.quantity == 0:
+                    raise ZeroQuantityProduct("Нельзя добавлять товар с нулевым количеством.")
+            except ZeroQuantityProduct as e:
+                print(str(e))
+            else:
+                self.__products.append(product)
+                Category.product_count += 1
+                print("Товар добавлен успешно.")
+            finally:
+                print("Обработка добавления товара завершена.")
         else:
             raise TypeError("Ошибка: нельзя добавлять вместо продукта или его наследников любой другой объект.")
 
@@ -48,6 +58,14 @@ class Category(BaseEntity):
         """Возвращает строку с названием категории и общим количеством всех продуктов."""
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def middle_price(self) -> float:
+        """Метод подсчета среднего ценника всех товаров в классе Category. В случае, когда в категории нет
+         товаров, возвращается ноль."""
+        try:
+            return float(sum([product.price for product in self.__products])) / len(self.__products)
+        except ZeroDivisionError:
+            return 0
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -114,3 +132,17 @@ if __name__ == "__main__":  # pragma: no cover
         print("Возникла ошибка TypeError при добавлении не продукта")
     else:
         print("Не возникла ошибка TypeError при добавлении не продукта")
+
+    print(category1.middle_price())
+
+    category_empty = Category("Пустая категория", "Категория без продуктов", [])
+    print(category_empty.middle_price())
+
+    product_temporary = Product("Временный товар", "Будет изменен", 200, 3)
+    product_temporary.quantity = 0
+
+    print("Пытаемся добавить товар с нулевым количеством после изменения:")
+    try:
+        category_smartphones.add_product(product_temporary)
+    except ZeroQuantityProduct as e:
+        print(f"Исключение перехвачено: {e}")
