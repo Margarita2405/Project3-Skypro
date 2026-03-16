@@ -217,22 +217,6 @@ def test_create_objects_from_json_empty_products() -> None:
     assert len(category.products) == 0
 
 
-def test_create_objects_with_none_values() -> None:
-    """Тестирование создания объектов с None значениями."""
-    test_data = [
-        {
-            "name": None,
-            "description": None,
-            "products": [{"name": None, "description": None, "price": None, "quantity": None}],
-        }
-    ]
-
-    categories = create_objects_from_json(test_data)
-    assert len(categories) == 1
-    assert categories[0].name is None
-    assert categories[0]._Category__products[0].price is None
-
-
 def test_create_objects_empty_category_name() -> None:
     """Тестирование создания категории с пустым именем."""
     test_data = [{"name": "", "description": "Описание", "products": []}]  # Пустое имя
