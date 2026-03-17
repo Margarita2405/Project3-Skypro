@@ -11,7 +11,7 @@ class ProductIterator:
     def __init__(self, category_object: Category) -> None:
         """Метод для инициализации итератора."""
         self.category = category_object
-        self.__products = category_object._Category__products
+        self.__products = category_object.product_list
         self.index = 0
 
     def __iter__(self) -> "ProductIterator":
