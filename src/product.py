@@ -11,9 +11,16 @@ class Product(BaseProduct, PrintMixin):
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
         """Метод для инициализации экземпляра класса."""
-        # Сначала инициализируем базовый абстрактный класс BaseProduct для установки атрибутов
+        # Проверка нулевого количества до вызова конструктора базового класса
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        # Инициализация базовых атрибутов
         super().__init__(name, description, price, quantity)
-        # Затем явно вызываем миксин для печати
+        if quantity > 0:
+            self.quantity = quantity
+        else:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        # Вызов миксина для печати
         PrintMixin.__init__(self)
 
     @classmethod
