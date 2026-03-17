@@ -12,8 +12,7 @@ class Category(BaseEntity):
 
     name: str
     description: str
-    __products: list
-    _Category__products: List[Product]
+    __products: List[Product]
 
     # Переменные на уровне класса для подсчета количества категорий и товаров
     category_count = 0
@@ -49,6 +48,11 @@ class Category(BaseEntity):
         for product in self.__products:
             products_str += f"{str(product)} \n"
         return products_str
+
+    @property
+    def product_list(self) -> List[Product]:
+        """Возвращает копию списка товаров категории для защиты от внешних изменений."""
+        return self.__products.copy()
 
     def total_cost(self) -> float:
         """Суммарная стоимость всех товаров в категории."""
