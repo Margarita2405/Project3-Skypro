@@ -16,10 +16,6 @@ class Product(BaseProduct, PrintMixin):
             raise ValueError("Товар с нулевым количеством не может быть добавлен.")
         # Инициализация базовых атрибутов
         super().__init__(name, description, price, quantity)
-        if quantity > 0:
-            self.quantity = quantity
-        else:
-            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
         # Вызов миксина для печати
         PrintMixin.__init__(self)
 
