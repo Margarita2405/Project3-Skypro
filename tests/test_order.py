@@ -1,4 +1,8 @@
+import pytest
+from pytest import CaptureFixture
+
 from src.category import Category
+from src.exceptions import ZeroQuantityProduct
 from src.lawngrass import LawnGrass
 from src.order import Order
 from src.product import Product
@@ -101,3 +105,50 @@ def test_order_polymorphism_with_category() -> None:
     entities = [category, order]
     costs = [e.total_cost() for e in entities]
     assert costs == [1100.0, 200.0]
+
+
+def test_order_init_zero_quantity(capsys: CaptureFixture[str]) -> None:
+    """
+    Проверяет, что при создании заказа с нулевым количеством:
+    - выбрасывается исключение ZeroQuantityProduct;
+    - сообщение об ошибке выводится;
+    - блок finally выводит сообщение о завершении обработки;
+    - объект не создаётся (счётчик заказов не увеличивается).
+    """
+    product = Product("Товар", "Описание", 100.0, 5)
+    initial_count = Order.order_count
+
+    with pytest.raises(ZeroQuantityProduct, match="Нельзя добавлять товар с нулевым количеством."):
+        Order("Заказ", "Описание", product, 0)
+
+    # Счётчик не должен увеличиться
+    assert Order.order_count == initial_count
+
+    captured = capsys.readouterr()
+    assert "Нельзя добавлять товар с нулевым количеством." in captured.out
+    assert "Обработка добавления товара завершена." in captured.out
+    assert "Товар добавлен успешно." not in captured.out
+
+
+def test_order_init_positive_quantity(capsys: CaptureFixture[str]) -> None:
+    """
+    Проверяет успешное создание заказа с положительным количеством:
+    - объект создаётся;
+    - счётчик заказов увеличивается;
+    - выводятся сообщения об успехе и завершении обработки.
+    """
+    product = Product("Товар", "Описание", 100.0, 5)
+    initial_count = Order.order_count
+
+    order = Order("Заказ", "Описание", product, 3)
+
+    assert order.name == "Заказ"
+    assert order.description == "Описание"
+    assert order.product == product
+    assert order.quantity == 3
+    assert Order.order_count == initial_count + 1
+
+    captured = capsys.readouterr()
+    assert "Товар добавлен успешно." in captured.out
+    assert "Обработка добавления товара завершена." in captured.out
+    assert "Нельзя добавлять товар с нулевым количеством." not in captured.out

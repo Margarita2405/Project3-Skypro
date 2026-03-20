@@ -46,12 +46,12 @@ def test_product_attributes(sample_product: Product) -> None:
 
 def test_product_init_default_values() -> None:
     """Тест инициализации с минимальными валидными значениями."""
-    product = Product("Тест", "", 0.0, 0)
+    product = Product("Тест", "", 0.0, 1)
 
     assert product.name == "Тест"
     assert product.description == ""
     assert product.price == 0.0
-    assert product.quantity == 0
+    assert product.quantity == 1
 
 
 def test_product_name_type(sample_product: Product) -> None:
@@ -97,13 +97,6 @@ def test_product_zero_price() -> None:
     product = Product("Товар", "Описание", 0.0, 5)
 
     assert product.price == 0.0
-
-
-def test_product_zero_quantity() -> None:
-    """Тест создания продукта с нулевым количеством."""
-    product = Product("Товар", "Описание", 100.0, 0)
-
-    assert product.quantity == 0
 
 
 def test_product_total_cost(sample_product: Product) -> None:
@@ -239,3 +232,26 @@ def test_add_with_none_raises_error(sample_product: Product) -> None:
     """Проверка сложения с None."""
     with pytest.raises(TypeError, match="Ошибка: нельзя сложить объекты разных классов."):
         sample_product + None  # type: ignore
+
+
+def test_product_init_zero_quantity() -> None:
+    """Проверяет, что при попытке создать продукт с количеством 0 выбрасывается исключение ValueError
+    с правильным сообщением."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен."):
+        Product("Тест", "Описание", 100.0, 0)
+
+
+def test_product_init_negative_quantity() -> None:
+    """Проверяет, что при попытке создать продукт с отрицательным количеством также выбрасывается
+    исключение ValueError (так как условие quantity > 0 не выполнено)."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен."):
+        Product("Тест", "Описание", 100.0, -5)
+
+
+def test_product_init_positive_quantity() -> None:
+    """Проверяет успешное создание продукта с положительным количеством."""
+    product = Product("Тест", "Описание", 100.0, 5)
+    assert product.name == "Тест"
+    assert product.description == "Описание"
+    assert product.price == 100.0
+    assert product.quantity == 5

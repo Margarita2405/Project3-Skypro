@@ -10,17 +10,52 @@ class Product(BaseProduct, PrintMixin):
     """Класс для представления товаров(наследник BaseProduct, PrintMixin)."""
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
-        """Метод для инициализации экземпляра класса."""
-        # Сначала инициализируем базовый абстрактный класс BaseProduct для установки атрибутов
-        super().__init__(name, description, price, quantity)
-        # Затем явно вызываем миксин для печати
+        """Метод для инициализации экземпляра класса с проверкой количества."""
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+
+        self.name = name
+        self.description = description
+        self.__price = price
+        self.quantity = quantity
+        # Вызов миксина для печати
         PrintMixin.__init__(self)
+
+    @property
+    def price(self) -> float:
+        """Геттер возвращает текущую цену товара."""
+        return self.__price
+
+    @price.setter
+    def price(self, new_price: float) -> None:
+        """Сеттер устанавливает новую цену товара. Проверяет, что цена положительная.
+        При понижении цены запрашивает подтверждение у пользователя."""
+        # Проверка на нулевую или отрицательную цену
+        if new_price <= 0:
+            print("Цена не должна быть нулевая или отрицательная")
+            return
+
+        # Если цена понижается, запрашиваем подтверждение у пользователя
+        if new_price < self.__price:
+            print(f"Внимание! Цена понижается с {self.__price} до {new_price}.")
+            response = input(
+                "Вы уверены, что хотите понизить цену? Если согласны, введите (y), для отмены " "введите (n): "
+            )
+
+            if response.lower() != "y":
+                print("Изменение цены отменено пользователем.")
+                return
+        # Установка новой цены
+        self.__price = new_price
+        print(f"Установлена цена продукта: {self.__price} руб.")
+
+    def __str__(self) -> str:
+        """Возвращает строковое представление товара в формате: Название продукта, цена руб. Остаток: количество шт."""
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     @classmethod
     def new_product(
-            cls,
-            product_data: Dict[str, Any],
-            products_list: Optional[Sequence["BaseProduct"]] = None
+        cls, product_data: Dict[str, Any], products_list: Optional[Sequence["BaseProduct"]] = None
     ) -> "BaseProduct":
         """Класс-метод для создания объекта Product из словаря с параметрами. Проверяет наличие товара с таким же
         именем в списке products_list."""
@@ -110,3 +145,13 @@ if __name__ == "__main__":  # pragma: no cover
         print(product1 + product2)
         print(product1 + product3)
         print(product2 + product3)
+
+    try:
+        product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+    except ValueError:
+        print(
+            "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым"
+            " количеством"
+        )
+    else:
+        print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")

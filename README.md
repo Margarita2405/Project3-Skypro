@@ -148,8 +148,15 @@ print(product2 + product3)
        """Геттер, который будет выводить список товаров в виде строк."""
 3. def __str__(self) -> str:
         """Возвращает строку с названием категории и общим количеством всех продуктов."""
-4. def total_cost(self) -> float:
+4. @property
+    def product_list(self) -> List[Product]:
+        """Возвращает копию списка товаров категории для защиты от внешних изменений."""
+        return self.__products.copy()
+5. def total_cost(self) -> float:
         """Суммарная стоимость всех товаров в категории."""
+6. def middle_price(self) -> float:
+        """Метод подсчета среднего ценника всех товаров в классе Category. В случае, когда
+        в категории нет товаров, возвращается ноль."""
 
 **Пример:**
 product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
@@ -191,6 +198,8 @@ except TypeError:
 print("Возникла ошибка TypeError при добавлении не продукта")
 else:
 print("Не возникла ошибка TypeError при добавлении не продукта")
+
+print(category1.middle_price())
 
 ### `class ProductIterator`
 Итератор для перебора товаров одной категории.
@@ -371,6 +380,10 @@ print(f"Общая стоимость товаров в категории: {cat
 order = Order("Заказ №1", "Срочная доставка", product1, 2)
 print(order)
 
+### class ZeroQuantityProduct(Exception):
+Класс исключения для обработки событий, когда в «Категорию» или «Заказ» добавляется товар
+с нулевым количеством.
+
 ## Использование классов:
 
 from src.base_product import BaseProduct
@@ -382,6 +395,7 @@ from src.order import Order
 from src.product_iterator.py import ProductIterator
 from src.smartphone.py import Smartphone
 from src.lawngrass.py import Lawngrass
+from src.exceptions.py import ZeroQuantityProduct
 
 ## Функциональность:
 
@@ -457,6 +471,10 @@ def total_cost(self) -> float:
 19. **Печать информации об объекте класса**     
 def __repr__(self) -> str:
         """Метод для отображения информации об объекте класса."""
+20. **Подсчет среднего ценника всех товаров в классе Category**
+def middle_price(self) -> float:
+        """Метод подсчета среднего ценника всех товаров в классе Category. В случае, когда
+        в категории нет товаров, возвращается ноль."""
 
 ## Использование функций:
 

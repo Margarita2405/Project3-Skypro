@@ -1,5 +1,6 @@
 from src.base_entity import BaseEntity
 from src.category import Category
+from src.exceptions import ZeroQuantityProduct
 from src.product import Product
 
 
@@ -17,9 +18,18 @@ class Order(BaseEntity):
         :param quantity: количество единиц товара
         """
         super().__init__(name, description)
-        self.product = product
-        self.quantity = quantity
-        Order.order_count += 1
+        try:
+            if quantity == 0:
+                raise ZeroQuantityProduct("Нельзя добавлять товар с нулевым количеством.")
+            self.product = product
+            self.quantity = quantity
+            Order.order_count += 1
+            print("Товар добавлен успешно.")
+        except ZeroQuantityProduct as e:
+            print(str(e))
+            raise
+        finally:
+            print("Обработка добавления товара завершена.")
 
     def total_cost(self) -> float:
         """Итоговая стоимость заказа."""
@@ -53,3 +63,11 @@ if __name__ == "__main__":  # pragma: no cover
     # Создаем заказ
     order = Order("Заказ №1", "Срочная доставка", product1, 2)
     print(order)
+
+    print("Пытаемся создать заказ с нулевым количеством:")
+    try:
+        order = Order("Заказ №1", "Тестовый заказ", product1, 0)
+    except ZeroQuantityProduct as e:
+        print(f"Исключение перехвачено: {e}")
+
+    print(f"\nОбщее количество заказов (счётчик): {Order.order_count}")
